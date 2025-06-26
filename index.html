@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Igreja Ministerial Jesus o Caminho a verdade é a vida</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #000;
+      color: #ccc;
+    }
+
+    header {
+      background-color: #8B0000;
+      padding: 20px;
+      text-align: center;
+      color: white;
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+    }
+
+    main {
+      padding: 20px;
+    }
+
+    form {
+      background-color: #111;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      color: #f0f0f0;
+    }
+
+    input[type="text"],
+    input[type="date"] {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #222;
+      color: #fff;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #b30000;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    input[type="search"] {
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      background-color: #222;
+      color: white;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #111;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.1);
+    }
+
+    th, td {
+      border: 1px solid #333;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #222;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      background-color: #8B0000;
+      color: white;
+    }
+
+    @media print {
+      header, footer, form, .actions, #searchBar { display: none; }
+      table { color: black; }
+      body { background-color: white; color: black; }
+      body::before {
+        content: 'Igreja Ministerial Jesus o Caminho a verdade é a vida.\A\A Membros da igreja';
+        white-space: pre;
+        font-size: 18px;
+        display: block;
+        margin-bottom: 20px;
+      }
+      body::after {
+        content: '\A\A© 2025 by Jarlison – Todos os direitos reservados 🔐';
+        white-space: pre;
+        display: block;
+        margin-top: 30px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>Igreja Ministerial Jesus o Caminho a verdade é a vida</header>
+  <main>
+    <form id="memberForm">
+      <label for="name">Nome</label>
+      <input type="text" id="name" required>
+
+      <label for="birthday">Data de aniversário</label>
+      <input type="date" id="birthday" required>
+
+      <label for="phone">Telefone</label>
+      <input type="text" id="phone" required>
+
+      <label for="address">Endereço</label>
+      <input type="text" id="address" required>
+
+      <button type="submit">Salvar Membro</button>
+    </form>
+
+    <div class="actions">
+      <input type="search" id="searchBar" placeholder="🔍 Pesquisar membro...">
+      <button onclick="exportToCSV()">Baixar Tabela</button>
+      <button onclick="window.print()">🖨️ Imprimir</button>
+      <button id="clearAll">🗑️ Limpar Todos</button>
+    </div>
+
+    <table id="membersTable">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Data de aniversário</th>
+          <th>Telefone</th>
+          <th>Endereço</th>
+          <th>Ação</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
+  <footer>© 2025 by Jarlison – Todos os direitos reservados 🔐🫀</footer>
+
+  <script>
+    const memberForm = document.getElementById('memberForm');
+    const membersTableBody = document.querySelector('#membersTable tbody');
+    const searchBar = document.getElementById('searchBar');
+
+    function getMembersFromStorage() {
+      return JSON.parse(localStorage.getItem('members') || '[]');
+    }
+
+    function saveMembersToStorage(members) {
+      localStorage.setItem('members', JSON.stringify(members));
+    }
+
+    function renderMembers(members) {
+      membersTableBody.innerHTML = '';
+      members.forEach((member, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${member.name}</td>
+          <td>${member.birthday}</td>
+          <td>${member.phone}</td>
+          <td>${member.address}</td>
+          <td><button onclick="deleteMember(${index})">❌</button></td>
+        `;
+        membersTableBody.appendChild(row);
+      });
+    }
+
+    function deleteMember(index) {
+      const members = getMembersFromStorage();
+      members.splice(index, 1);
+      saveMembersToStorage(members);
+      renderMembers(members);
+    }
+
+    function exportToCSV() {
+      const members = getMembersFromStorage();
+      const csvContent = "data:text/csv;charset=utf-8," +
+        `Igreja Ministerial Jesus o Caminho a verdade é a vida.\nMembros da igreja\n` +
+        members.map(m => `Nome: ${m.name}, Data de aniversário: ${m.birthday}, Telefone: ${m.phone}, Local onde mora: ${m.address}`).join("\n");
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "membros_igreja.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    memberForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const newMember = {
+        name: document.getElementById('name').value,
+        birthday: document.getElementById('birthday').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value
+      };
+      const members = getMembersFromStorage();
+      members.push(newMember);
+      saveMembersToStorage(members);
+      renderMembers(members);
+      memberForm.reset();
+    });
+
+    document.getElementById('clearAll').addEventListener('click', () => {
+      if (confirm("Tem certeza que deseja apagar todos os dados?")) {
+        localStorage.removeItem('members');
+        renderMembers([]);
+      }
+    });
+
+    searchBar.addEventListener('input', () => {
+      const members = getMembersFromStorage();
+      const searchValue = searchBar.value.toLowerCase();
+      const filtered = members.filter(m =>
+        m.name.toLowerCase().includes(searchValue) ||
+        m.phone.includes(searchValue) ||
+        m.address.toLowerCase().includes(searchValue)
+      );
+      renderMembers(filtered);
+    });
+
+    window.onload = () => {
+      renderMembers(getMembersFromStorage());
+    };
+  </script>
+</body>
+
+</html>
